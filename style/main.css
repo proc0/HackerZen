@@ -70,6 +70,7 @@ details {
 
       span:first-child {
         font-size: 1.5rem;
+        font-weight: bold;
       }
     }
 
@@ -126,17 +127,20 @@ details:not([open]) {
 }
 
 button {
+  display: flex;
+  justify-content: center;
   appearance: none;
-  color: inherit;
+  color: #525252ff;
   background: transparent;
   border: none;
   border-top: 1px solid #525252ff;
   cursor: pointer;
-  padding: 0.5rem;
+  padding: 0.5rem 1rem;
   font-size: 1rem;
   width: 100%;
 
   &:hover {
     background-color: #313131ff;
+    color: inherit;
   }
 }

@@ -1,4 +1,7 @@
 class Page extends HTMLElement {
+  static BATCH_KIDS = 3
+  static BATCH_POSTS = 5
+
   constructor() {
     super()
   }
@@ -7,7 +10,7 @@ class Page extends HTMLElement {
     this.dispatchEvent(
       new CustomEvent('load', {
         bubbles: true,
-        detail: { cursor: 0, count: 5, resource: Resource.Top },
+        detail: { cursor: 0, count: Page.BATCH_POSTS, resource: Resource.Top },
       })
     )
   }
@@ -19,14 +22,14 @@ class Page extends HTMLElement {
     const itemId = post.getAttribute('id')
     const numItemKids = Number(post.getAttribute('data-kids'))
 
-    const numKidsToFetch = numItemKids > 3 ? numItemKids - numChildPosts : numItemKids
-    const remaining = numKidsToFetch > 3 ? numKidsToFetch - 3 : 0
+    const numKidsToFetch = numItemKids > Page.BATCH_KIDS ? numItemKids - numChildPosts : numItemKids
+    const remaining = numKidsToFetch > Page.BATCH_KIDS ? numKidsToFetch - Page.BATCH_KIDS : 0
     post.setAttribute('data-kids', remaining)
 
     if (remaining === 0 && loadButton) {
       loadButton.remove()
     } else {
-      loadButton.textContent = `(${remaining})`
+      loadButton.textContent = `${'∨'.repeat(remaining)}`
     }
 
     post.dispatchEvent(
@@ -111,7 +114,7 @@ class Page extends HTMLElement {
 
     if (item.kids?.length > 0) {
       const moreButton = document.createElement('button')
-      moreButton.textContent = `(${item.kids.length})`
+      moreButton.textContent = `${'∨'.repeat(item.kids.length)}`
       details.append(moreButton)
 
       moreButton.addEventListener('click', Page.onLoadMore)
