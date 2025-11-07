@@ -3,7 +3,7 @@ class View extends HTMLElement {
 
   connectedCallback() {
     this.addEventListener('load', ({ detail, target }) => {
-      this.model.getItems(detail.cursor, detail.count, detail.resource).then(Page.render(target))
+      this.model.getItems(detail).then(Page.render(target))
     })
   }
 
@@ -12,8 +12,11 @@ class View extends HTMLElement {
   }
 
   initialize() {
-    customElements.define('hz-page', Page)
-    const page = document.createElement('hz-page')
+    const TAG_PAGE = 'hz-page'
+    customElements.define(TAG_PAGE, Page)
+    const page = document.createElement(TAG_PAGE)
     this.appendChild(page)
+
+    return this
   }
 }

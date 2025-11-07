@@ -11,7 +11,7 @@ class Model {
     }
   }
 
-  getItems(cursor, count, resource) {
+  getItems({ cursor, count, resource }) {
     return this.getIds(cursor, count, resource)
       .then(this.store.retrieve.bind(this.store))
       .then(this.getMissingItems.bind(this))

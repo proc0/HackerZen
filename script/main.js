@@ -1,6 +1,7 @@
 window.onload = function () {
-  customElements.define('hz-view', View, { extends: 'main' })
-  const view = document.createElement('main', { is: 'hz-view' })
-  view.initialize()
-  document.querySelector('body').prepend(view)
+  const TAG_VIEW = 'hz-view'
+  customElements.define(TAG_VIEW, View, { extends: 'main' })
+  const main = document.createElement('main', { is: TAG_VIEW }).initialize()
+
+  document.querySelector('body').prepend(main)
 }
