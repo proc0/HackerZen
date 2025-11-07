@@ -25,6 +25,11 @@ main {
 
   & hz-page > details {
     border-right: 1px solid #525252ff;
+
+    &[open] {
+      border-bottom: 1px solid #525252ff;
+    }
+
     & > summary {
       border-top: none;
       cursor: pointer;
@@ -160,4 +165,8 @@ button {
     background-color: #313131ff;
     color: inherit;
   }
+}
+
+a {
+  color: #89a0ebb2;
 }
