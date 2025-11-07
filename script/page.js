@@ -17,15 +17,28 @@ class Page extends HTMLElement {
 
   static onLoadMore(event) {
     event.stopPropagation()
-    const post = event.target.parentElement
-    const loadButton = post.querySelector('& > button')
-    const numChildPosts = post.querySelectorAll('& > details')?.length || 0
-    const itemId = post.getAttribute('id')
-    const numItemKids = Number(post.getAttribute('data-kids'))
+    const parent = event.target.parentElement.parentElement.parentElement
+
+    if (parent instanceof Page) {
+      return parent.dispatchEvent(
+        new CustomEvent('load', {
+          bubbles: true,
+          detail: {
+            cursor: parent.querySelectorAll('& > details').length,
+            count: Page.BATCH_POSTS,
+            resource: Resource.Top,
+          },
+        })
+      )
+    }
+    const loadButton = parent.querySelector('& > details[data-loader] > summary > button')
+    const numChildPosts = parent.querySelectorAll('& > details:not([data-loader])')?.length || 0
+    const itemId = parent.getAttribute('id')
+    const numItemKids = Number(parent.getAttribute('data-kids'))
 
     const numKidsToFetch = numItemKids > Page.BATCH_KIDS ? numItemKids - numChildPosts : numItemKids
     const remaining = numKidsToFetch > Page.BATCH_KIDS ? numKidsToFetch - Page.BATCH_KIDS : 0
-    post.setAttribute('data-kids', remaining)
+    parent.setAttribute('data-kids', remaining)
 
     if (remaining === 0 && loadButton) {
       loadButton.remove()
@@ -33,7 +46,7 @@ class Page extends HTMLElement {
       loadButton.textContent = `${'∨'.repeat(remaining)}`
     }
 
-    post.dispatchEvent(
+    return parent.dispatchEvent(
       new CustomEvent('load', {
         bubbles: true,
         detail: {
@@ -48,16 +61,37 @@ class Page extends HTMLElement {
   static onExpand(event) {
     event.stopImmediatePropagation()
     const details = event.currentTarget
-    const moreButton = details.querySelector('& > button')
-    if (!details.open && !details.querySelectorAll('& > details')?.length && moreButton) {
+    const moreButton = details.querySelector('& > details[data-loader] > summary > button')
+    if (
+      !details.open &&
+      !details.querySelectorAll('& > details:not([data-loader])')?.length &&
+      moreButton
+    ) {
       moreButton.click()
     }
   }
 
+  static renderLoader(item) {
+    const button = document.createElement('button')
+    if (item?.kids?.length) {
+      button.textContent = `${'∨'.repeat(item.kids.length)}`
+    } else {
+      button.textContent = 'Load more'
+    }
+    button.addEventListener('click', Page.onLoadMore)
+
+    const details = document.createElement('details')
+    details.setAttribute('data-loader', '')
+    const summary = document.createElement('summary')
+    summary.append(button)
+    details.append(summary)
+
+    return details
+  }
+
   static render(parent) {
     return (items) => {
-      const moreButton = parent.querySelector('& > button')
-      const rootMoreButton = document.getElementById('load-more')
+      const loader = parent.querySelector('& > details[data-loader] > summary > button')
 
       items.forEach((item) => {
         const post = Page.renderItem(item)
@@ -66,39 +100,16 @@ class Page extends HTMLElement {
           parent.setAttribute('data-kids', Number(post.getAttribute('data-kids') - 1))
         }
 
-        if (parent instanceof Page && rootMoreButton) {
-          parent.insertBefore(post, rootMoreButton)
+        if (loader) {
+          parent.insertBefore(post, loader.parentElement.parentElement)
         } else {
-          if (moreButton) {
-            parent.insertBefore(post, moreButton)
-          } else {
-            parent.append(post)
-          }
+          parent.append(post)
         }
       })
 
-      if (parent instanceof Page && !rootMoreButton) {
-        const loadMore = document.createElement('button')
-        loadMore.textContent = 'Load more'
-        loadMore.addEventListener('click', (event) => {
-          event.stopPropagation()
-          parent.dispatchEvent(
-            new CustomEvent('load', {
-              bubbles: true,
-              detail: {
-                cursor: parent.querySelectorAll('& > details').length,
-                count: Page.BATCH_POSTS,
-                resource: Resource.Top,
-              },
-            })
-          )
-        })
-        const details = document.createElement('details')
-        details.setAttribute('id', 'load-more')
-        const summary = document.createElement('summary')
-        summary.append(loadMore)
-        details.append(summary)
-        parent.append(details)
+      if (parent instanceof Page && !loader) {
+        const loadMore = Page.renderLoader()
+        parent.append(loadMore)
       }
     }
   }
@@ -162,11 +173,9 @@ class Page extends HTMLElement {
     details.append(section)
 
     if (item.kids?.length > 0) {
-      const moreButton = document.createElement('button')
-      moreButton.textContent = `${'∨'.repeat(item.kids.length)}`
-      details.append(moreButton)
+      const loader = Page.renderLoader(item)
+      details.append(loader)
 
-      moreButton.addEventListener('click', Page.onLoadMore)
       details.addEventListener('click', Page.onExpand)
     }
 
