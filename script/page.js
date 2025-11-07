@@ -24,15 +24,15 @@ class Page extends HTMLElement {
         new CustomEvent('load', {
           bubbles: true,
           detail: {
-            cursor: parent.querySelectorAll('& > details').length,
+            cursor: Page.queryChildrenLength(parent),
             count: Page.BATCH_POSTS,
             resource: Resource.Top,
           },
         })
       )
     }
-    const loadButton = parent.querySelector('& > details[data-loader] > summary > button')
-    const numChildPosts = parent.querySelectorAll('& > details:not([data-loader])')?.length || 0
+    const loadButton = Page.queryLoader(parent)
+    const numChildPosts = Page.queryChildrenLength(parent)
     const itemId = parent.getAttribute('id')
     const numItemKids = Number(parent.getAttribute('data-kids'))
 
@@ -61,12 +61,8 @@ class Page extends HTMLElement {
   static onExpand(event) {
     event.stopImmediatePropagation()
     const details = event.currentTarget
-    const moreButton = details.querySelector('& > details[data-loader] > summary > button')
-    if (
-      !details.open &&
-      !details.querySelectorAll('& > details:not([data-loader])')?.length &&
-      moreButton
-    ) {
+    const moreButton = Page.queryLoader(details)
+    if (!details.open && !Page.queryChildrenLength(details) && moreButton) {
       moreButton.click()
     }
   }
@@ -91,7 +87,7 @@ class Page extends HTMLElement {
 
   static render(parent) {
     return (items) => {
-      const loader = parent.querySelector('& > details[data-loader] > summary > button')
+      const loader = Page.queryLoader(parent)
 
       items.forEach((item) => {
         const post = Page.renderItem(item)
@@ -198,5 +194,13 @@ class Page extends HTMLElement {
     }
 
     return ellapsedText
+  }
+
+  static queryLoader(item) {
+    return item.querySelector('& > details[data-loader] > summary > button')
+  }
+
+  static queryChildrenLength(item) {
+    return item.querySelectorAll('& > details:not([data-loader])')?.length || 0
   }
 }

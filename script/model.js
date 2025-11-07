@@ -14,19 +14,24 @@ class Model {
   getItems(cursor, count, resource) {
     return this.getIds(cursor, count, resource)
       .then(this.store.retrieve.bind(this.store))
-      .then(this.reclaim.bind(this))
+      .then(this.getMissingItems.bind(this))
+      .catch((error) => console.error(error))
   }
 
-  reclaim({ foundItems, missingIds }) {
+  getMissingItems({ foundItems, missingIds }) {
     return new Promise((resolve, reject) => {
+      if (!missingIds.length) {
+        return foundItems.length ? resolve(foundItems) : reject({ foundItems, missingIds })
+      }
+
       return Client.fetchItems(missingIds).then((items) => {
-        if (items.length) {
-          return this.store.saveAll(items).then((ids) => {
-            return resolve(items.concat(foundItems))
-          })
+        if (!items?.length) {
+          return reject(items)
         }
 
-        return foundItems.length ? resolve(foundItems) : reject(items)
+        return this.store.saveAll(items).then(() => {
+          return resolve(items.concat(foundItems))
+        })
       })
     })
   }
