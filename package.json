@@ -1,10 +1,11 @@
 {
   "name": "hydrazine",
-  "version": "0.0.1",
-  "description": "Hacker News clone",
+  "version": "0.0.2",
+  "description": "Lightweight Hacker News with an ergonomic UI",
   "keywords": [
-    "Hacker",
-    "News"
+    "Hacker News",
+    "YCombinator",
+    "Tech"
   ],
   "homepage": "https://github.com/proc0/Hydrazine#readme",
   "bugs": {
