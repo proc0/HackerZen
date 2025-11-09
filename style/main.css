@@ -63,6 +63,11 @@ details {
   summary {
     display: inline-flex;
     border-top: 1px solid #525252ff;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #313131ff;
+    }
 
     h1,
     h2 {
@@ -73,6 +78,14 @@ details {
     h1 {
       font-size: 1.5rem;
       padding: 1rem;
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
     }
 
     div {
@@ -94,9 +107,8 @@ details {
 
     h2 {
       line-height: 1.2rem;
-      padding: 1rem 1rem 0 1rem;
+      padding: 1rem 1rem 1rem 1.5rem;
       font-size: 1rem;
-      cursor: pointer;
 
       span {
         font-weight: bold;
@@ -116,7 +128,7 @@ details {
 
   section {
     display: flex;
-    padding: 0 1rem 1rem 1rem;
+    padding: 0.5rem 1rem 1rem 1.5rem;
 
     pre {
       white-space: pre-wrap;
@@ -127,8 +139,6 @@ details {
 details[open] {
   summary {
     h2 {
-      padding-bottom: 0.5rem;
-
       &::after {
         content: '[─]';
       }
@@ -139,8 +149,6 @@ details[open] {
 details:not([open]) {
   summary {
     h2 {
-      padding: 1rem;
-
       &::after {
         content: '[🞤]';
       }

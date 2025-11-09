@@ -57,7 +57,7 @@ class Page extends View {
   }
 
   static onExpand(event) {
-    event.stopImmediatePropagation()
+    // event.stopImmediatePropagation()
     const details = event.currentTarget
     const loader = Page.queryLoader(details)
     if (!details.open && !Page.queryChildrenLength(details) && !!loader) {
@@ -123,7 +123,11 @@ class Page extends View {
 
     if (item.title) {
       const title = document.createElement('h1')
-      title.textContent = `${item.title}`
+      const link = document.createElement('a')
+      link.setAttribute('href', item.url)
+      link.setAttribute('target', '_blank')
+      link.textContent = `${item.title}`
+      title.append(link)
       if (item.type != 'job') {
         const scoreCommentCounter = document.createElement('div')
         const score = document.createElement('span')
