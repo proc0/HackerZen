@@ -1,5 +1,5 @@
 {
-  "name": "hydrazine",
+  "name": "PhreakNews",
   "version": "0.0.2",
   "description": "Lightweight Hacker News with an ergonomic UI",
   "keywords": [
@@ -7,13 +7,13 @@
     "YCombinator",
     "Tech"
   ],
-  "homepage": "https://github.com/proc0/Hydrazine#readme",
+  "homepage": "https://github.com/proc0/PhreakNews#readme",
   "bugs": {
-    "url": "https://github.com/proc0/Hydrazine/issues"
+    "url": "https://github.com/proc0/PhreakNews/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/proc0/Hydrazine.git"
+    "url": "git+https://github.com/proc0/PhreakNews.git"
   },
   "license": "MIT",
   "author": "proc0",

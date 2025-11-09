@@ -1,8 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Vend+Sans:wght@0,300..700;1,300..700&display=swap');
+
 html {
   box-sizing: border-box;
   background-color: #222222;
   color: #bbb;
-  font-family: Sans-serif;
+  font-family: 'Vend sans', sans-serif;
   font-size: 0.18in;
 }
 
@@ -13,17 +15,19 @@ body {
 
 main {
   margin: 2rem;
+}
 
-  & hz-page > details:last-child {
+phreak-page {
+  & > details:last-child {
     border-bottom: 1px solid #525252ff;
   }
 
-  & hz-page > details > section {
+  & > details > section {
     border-top: 1px solid #525252ff;
     padding: 1rem;
   }
 
-  & hz-page > details {
+  & > details {
     border-right: 1px solid #525252ff;
 
     &[open] {
@@ -36,15 +40,11 @@ main {
     }
   }
 
-  & hz-page > details:first-child > summary {
+  & > details:first-child > summary {
     border-top: 1px solid #525252ff;
   }
-  /* 
-  & hz-page > details > section {
-    background-color: #181818;
-  } */
 
-  & hz-page > details summary > button {
+  & > details summary > button {
     border-top: none;
   }
 }
@@ -90,6 +90,8 @@ details {
     h1 {
       font-size: 1.5rem;
       padding: 1rem;
+      font-weight: 500;
+
       a {
         text-decoration: none;
         color: inherit;
@@ -104,6 +106,7 @@ details {
       line-height: 1.2rem;
       padding: 1rem 1rem 1rem 1.5rem;
       font-size: 1rem;
+      font-weight: 700;
 
       span {
         font-weight: bold;

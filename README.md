@@ -1,2 +1,3 @@
-# Hydrazine
-A smooth HackerNews client.
+# Phreak News
+
+A lightweight HackerNews with smooth UI.
