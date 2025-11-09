@@ -65,8 +65,20 @@ details {
     border-top: 1px solid #525252ff;
     cursor: pointer;
 
+    & > div + div {
+      display: none;
+    }
+
     &:hover {
       background-color: #313131ff;
+
+      & > div {
+        display: none;
+      }
+
+      & > div + div {
+        display: flex;
+      }
     }
 
     h1,
@@ -88,23 +100,6 @@ details {
       }
     }
 
-    div {
-      display: flex;
-      flex-direction: column;
-      padding: 0.5rem 0 0 0.5rem;
-      align-items: center;
-      width: 3rem;
-
-      span {
-        display: flex;
-      }
-
-      span:first-child {
-        font-size: 1.5rem;
-        font-weight: bold;
-      }
-    }
-
     h2 {
       line-height: 1.2rem;
       padding: 1rem 1rem 1rem 1.5rem;
@@ -117,6 +112,30 @@ details {
 
       &::after {
         content: '⊟';
+      }
+    }
+
+    div {
+      display: flex;
+      flex-direction: column;
+      padding: 0.5rem 0 0 0.5rem;
+      align-items: center;
+      width: 3rem;
+
+      span {
+        display: flex;
+      }
+
+      button {
+        color: inherit;
+        border: none;
+        padding: 0;
+      }
+
+      span:first-child,
+      button:first-child {
+        font-size: 1.5rem;
+        font-weight: bold;
       }
     }
   }

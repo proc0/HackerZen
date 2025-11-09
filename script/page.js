@@ -135,10 +135,22 @@ class Page extends View {
         scoreCommentCounter.append(score)
         if (item.descendants) {
           const commentCounter = document.createElement('span')
-          commentCounter.textContent = `(${item.descendants})`
+          commentCounter.textContent = item.descendants
           scoreCommentCounter.append(commentCounter)
         }
         summary.append(scoreCommentCounter)
+
+        //upvote and downvote
+        const arrows = document.createElement('div')
+        const upArrow = document.createElement('button')
+        upArrow.textContent = '▲'
+        upArrow.addEventListener('click', (e) => console.log('up'))
+        const downArrow = document.createElement('button')
+        downArrow.textContent = '▼'
+        downArrow.addEventListener('click', (e) => console.log('down'))
+        arrows.append(upArrow)
+        arrows.append(downArrow)
+        summary.append(arrows)
       } else {
         const placeholder = document.createElement('div')
         summary.append(placeholder)
@@ -164,6 +176,7 @@ class Page extends View {
           link.setAttribute('target', '_blank')
         })
       }
+
       section.append(comment)
     }
 
