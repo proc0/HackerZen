@@ -144,7 +144,15 @@ class Page extends View {
         const arrows = document.createElement('div')
         const upArrow = document.createElement('button')
         upArrow.textContent = '▲'
-        upArrow.addEventListener('click', (e) => console.log('up'))
+        let headers = new Headers({
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Access-Control-Allow-Origin': '*',
+        })
+        upArrow.addEventListener('click', (e) =>
+          fetch(`http://localhost:3000/upvote/${item.id}`, { headers, mode: 'no-cors' }).then(
+            (res) => console.log(res)
+          )
+        )
         const downArrow = document.createElement('button')
         downArrow.textContent = '▼'
         downArrow.addEventListener('click', (e) => console.log('down'))

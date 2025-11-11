@@ -14,13 +14,13 @@ const convertRequestBodyToFormUrlEncoded = (data) => {
 export class Server {
   static BASE_URL = 'https://news.ycombinator.com'
 
-  logUser(username, password) {
+  static async login(username, password) {
     let headers = new Headers({
       'Content-Type': 'application/x-www-form-urlencoded',
       'Access-Control-Allow-Origin': '*',
     })
 
-    return fetch(`${this.BaseURL}/login`, {
+    const request = await fetch(`${Server.BASE_URL}/login`, {
       method: 'POST',
       headers: headers,
       body: convertRequestBodyToFormUrlEncoded({
@@ -31,15 +31,26 @@ export class Server {
       mode: 'no-cors',
       credentials: 'include',
     })
-      .then((res) => res.text())
-      .then((body) => {
-        console.log(body)
-        if (body.match(/Bad Login/i)) {
-          return false
-        } else {
-          return true
-        }
-      })
+
+    const response = await request.text()
+
+    console.log(response)
+
+    if (response.match(/Bad Login/i)) {
+      return false
+    } else {
+      return true
+    }
+
+    // .then((res) => res.text())
+    // .then((body) => {
+    //   console.log(body)
+    //   if (body.match(/Bad Login/i)) {
+    //     return false
+    //   } else {
+    //     return true
+    //   }
+    // })
   }
 
   static async getUpvoteUrl(ctx) {
@@ -47,7 +58,7 @@ export class Server {
       headers: new Headers({
         'Content-Type': 'application/x-www-form-urlencoded',
         'Access-Control-Allow-Origin': '*',
-        'Cookie': 'user=proc0&Nwg5zsZJgTWqqYwoIjI9qchA7KaLZXeB',
+        // 'Cookie': 'user=proc0&Nwg5zsZJgTWqqYwoIjI9qchA7KaLZXeB',
       }),
       mode: 'no-cors',
       credentials: 'include',
@@ -61,7 +72,8 @@ export class Server {
     const upvoteRequest = await fetch(`${Server.BASE_URL}/${upvoteUrl}`, options)
     const upvoteResponse = await upvoteRequest.text()
     console.log(upvoteUrl)
-    ctx.redirect('/')
+    // ctx.redirect('/')
+    ctx.body = { ok: true }
   }
 
   getHmac(id) {
