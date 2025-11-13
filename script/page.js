@@ -65,6 +65,15 @@ class Page extends View {
     }
   }
 
+  static onUpvote(event) {
+    event.stopPropagation()
+    const details = event.target.parentElement.parentElement.parentElement
+    fetch(`/upvote/${details.getAttribute('id')}`, {
+      mode: 'no-cors',
+      credentials: 'include',
+    }).then((res) => console.log(res))
+  }
+
   static renderLoader(item) {
     const button = document.createElement('button')
     if (item?.kids?.length) {
@@ -159,20 +168,7 @@ class Page extends View {
         const upArrow = document.createElement('button')
         upArrow.textContent = '▲'
 
-        upArrow.addEventListener('click', (e) => {
-          cookieStore.getAll().then((cookie) => {
-            const headers = new Headers({
-              'Content-Type': 'application/x-www-form-urlencoded',
-              'Access-Control-Allow-Origin': '*',
-              'Cookie': cookie,
-            })
-            fetch(`http://localhost:3000/upvote/${item.id}`, {
-              headers,
-              mode: 'no-cors',
-              credentials: 'include',
-            }).then((res) => console.log(res))
-          })
-        })
+        upArrow.addEventListener('click', Page.onUpvote)
         const downArrow = document.createElement('button')
         downArrow.textContent = '▼'
         downArrow.addEventListener('click', (e) => console.log('down'))
