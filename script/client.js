@@ -1,3 +1,4 @@
+// TODO: refactor to Stories?
 class Resource {
   static Top = new Resource('topstories')
   static New = new Resource('newstories')

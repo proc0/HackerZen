@@ -13,41 +13,24 @@ class Page extends View {
     )
   }
 
-  static renderLoading(parent) {
-    const loadingText = document.createElement('span')
-    loadingText.setAttribute('data-loading', '')
-    loadingText.textContent = 'Loading...'
-
-    parent.prepend(loadingText)
-  }
-
   static render(parent) {
     return (items) => {
-      //   const loader = Page.queryLoader(parent)
-      //   const loading = parent.querySelector('span[data-loading]')
-
-      //   if (loading) {
-      //     loading.remove(0)
-      //   }
-
       items.forEach((item) => {
         const post = Item.render(item)
-        parent.appendChild(post)
-        // if (post.getAttribute('data-deleted') === '') {
-        //   parent.setAttribute('data-kids', Number(post.getAttribute('data-kids') - 1))
-        // }
-
-        // if (loader) {
-        //   parent.insertBefore(post, loader.parentElement.parentElement)
-        // } else {
-        //   parent.append(post)
-        // }
+        if (parent instanceof Page) {
+          parent.appendChild(post)
+        } else {
+          parent.querySelector('section').appendChild(post)
+        }
       })
-
-      //   if (parent instanceof Page && !loader) {
-      //     const loadMore = Page.renderLoader()
-      //     parent.append(loadMore)
-      //   }
     }
+  }
+
+  static queryLoader(item) {
+    return item.querySelector('footer button')
+  }
+
+  static queryChildrenLength(item) {
+    return item.querySelectorAll('section > article')?.length || 0
   }
 }

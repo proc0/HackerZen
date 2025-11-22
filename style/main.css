@@ -5,3 +5,7 @@ html {
   font-family: 'Vend sans', sans-serif;
   font-size: 0.18in;
 }
+
+article {
+  padding: 0 0 0 1rem;
+}

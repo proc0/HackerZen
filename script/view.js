@@ -5,9 +5,24 @@ class View extends HTMLElement {
     super()
 
     this.addEventListener('load', ({ detail, target }) => {
-      Page.renderLoading(target)
-      View.model.getItems(detail).then(Page.render(target))
+      View.renderLoading(target)
+      View.model
+        .getItems(detail)
+        .then(Page.render(target))
+        .then(() => View.removeLoading(target))
     })
+  }
+
+  static renderLoading(parent) {
+    const loadingText = document.createElement('span')
+    loadingText.setAttribute('data-loading', '')
+    loadingText.textContent = 'Loading...'
+
+    parent.prepend(loadingText)
+  }
+
+  static removeLoading(parent) {
+    parent.querySelector('span[data-loading]').remove()
   }
 
   static getEllapsedText(begin, end) {
