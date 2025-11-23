@@ -16,6 +16,11 @@ class Page extends View {
     return (items) => {
       items.forEach((item) => {
         const post = Item.render(item)
+
+        if (post.getAttribute('data-deleted') === '') {
+          return parent.setAttribute('data-kids', Number(post.getAttribute('data-kids') - 1))
+        }
+
         if (parent instanceof Page) {
           parent.appendChild(post)
         } else {
@@ -23,5 +28,9 @@ class Page extends View {
         }
       })
     }
+  }
+
+  static getStory(page) {
+    return Stories[page.getAttribute('data-type')]
   }
 }
