@@ -11,15 +11,16 @@ class Page extends View {
     return (items) => {
       items.forEach((item) => {
         const post = Item.render(item)
-
-        if (post.getAttribute('data-deleted') === '') {
-          return parent.setAttribute('data-kids', Number(post.getAttribute('data-kids') - 1))
-        }
-
         if (parent instanceof Page) {
           parent.appendChild(post)
         } else {
-          parent.querySelector('section').appendChild(post)
+          const loader = Item.queryLoader(parent)
+          const section = parent.querySelector('section')
+          if (loader) {
+            section.insertBefore(post, loader.parentElement)
+          } else {
+            section.appendChild(post)
+          }
         }
       })
     }

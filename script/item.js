@@ -1,4 +1,4 @@
-class Item extends View {
+class Item {
   static LOAD_COUNT = 3
 
   static attach(item, child) {
@@ -11,7 +11,7 @@ class Item extends View {
 
   static onLoad(event) {
     event.stopPropagation()
-    const article = event.target.parentElement.parentElement
+    const article = event.target.parentElement.parentElement.parentElement.parentElement
     const childCount = Item.countChildren(article)
 
     if (article instanceof Page) {
@@ -30,7 +30,8 @@ class Item extends View {
     if (kidsLeft === 0) {
       event.target.parentElement.remove()
     } else {
-      event.target.textContent = `${'✛'.repeat(kidsLeft)}`
+      // event.target.textContent = `${'✛'.repeat(kidsLeft)}`
+      event.target.textContent = `✛${kidsLeft}`
     }
 
     return article.dispatchEvent(View.getLoadEvent(childCount, Item.LOAD_COUNT, Number(itemId)))
@@ -53,11 +54,11 @@ class Item extends View {
   }
 
   static queryLoader(item) {
-    return item.querySelector('& > footer button')
+    return item.querySelector('& > details > section > footer > button')
   }
 
   static countChildren(item) {
-    return item.querySelectorAll('details > section > article')?.length || 0
+    return item.querySelectorAll('& > details > section > article')?.length || 0
   }
 
   static render(item) {
@@ -127,10 +128,11 @@ class Item extends View {
 
     if (item.kids?.length > 0) {
       const button = document.createElement('button')
-      button.textContent = `${'✛'.repeat(item.kids.length)}`
+      // button.textContent = `${'✛'.repeat(item.kids.length)}`
+      button.textContent = `✛${item.kids.length}`
       button.addEventListener('click', Item.onLoad)
       footer.append(button)
-      article.append(footer)
+      section.append(footer)
     }
 
     return article
