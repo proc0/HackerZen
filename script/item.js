@@ -1,31 +1,75 @@
 class Item {
   static LOAD_COUNT = 3
 
-  static attach(item, child) {
-    if (child?.childNodes.length) {
-      item.append(child)
+  static countChildren(node) {
+    return node.querySelectorAll('& > details > section > article')?.length || 0
+  }
+
+  static getKidsNumber(node) {
+    return Number(node.getAttribute('data-kids'))
+  }
+
+  static isNodeDead(node) {
+    return node.getAttribute('data-dead') === ''
+  }
+
+  static queryContainer(node) {
+    return node.querySelector('details')
+  }
+
+  static queryLoader(node) {
+    return node.querySelector('& > details > section > footer > button')
+  }
+
+  static openContainer(container) {
+    container.setAttribute('open', '')
+    return container
+  }
+
+  static setKidsNumber(node, kidsNumber) {
+    node.setAttribute('data-kids', kidsNumber)
+    return node
+  }
+
+  static setNodeDead(node) {
+    node.setAttribute('data-dead', '')
+    return node
+  }
+
+  static toggleContainer(node) {
+    const container = Item.queryContainer(node)
+
+    if (!container) return
+
+    if (container.getAttribute('open') === '') {
+      container.removeAttribute('open')
+    } else {
+      container.setAttribute('open', '')
     }
 
-    return item
+    return container
   }
 
   static onLoad(event) {
     event.stopPropagation()
-    const article = event.target.parentElement.parentElement.parentElement.parentElement
-    const childCount = Item.countChildren(article)
+    let article = event.target.parentElement.parentElement.parentElement.parentElement
+    if (article.getAttribute('id') === 'loader') {
+      article = article.parentElement
+    }
 
     if (article instanceof Page) {
+      const postCount = article.querySelectorAll('& > article')?.length || 0
       return article.dispatchEvent(
-        View.getLoadEvent(childCount, Page.LOAD_COUNT, Page.getStory(article))
+        View.getLoadEvent(postCount, Page.LOAD_COUNT, Page.getStory(article))
       )
     }
 
-    const itemId = article.getAttribute('id')
-    const kidsNumber = Number(article.getAttribute('data-kids'))
+    const childCount = Item.countChildren(article)
+    const kidsNumber = Item.getKidsNumber(article)
     const kidsLength = kidsNumber > Item.LOAD_COUNT ? kidsNumber - childCount : kidsNumber
     const kidsLeft = kidsLength > Item.LOAD_COUNT ? kidsLength - Item.LOAD_COUNT : 0
-    article.setAttribute('data-kids', kidsLeft)
-    article.querySelector('details').setAttribute('open', '')
+
+    Item.setKidsNumber(article, kidsLeft)
 
     if (kidsLeft === 0) {
       event.target.parentElement.remove()
@@ -33,6 +77,9 @@ class Item {
       // event.target.textContent = `${'✛'.repeat(kidsLeft)}`
       event.target.textContent = `✛${kidsLeft}`
     }
+
+    Item.queryContainer(article).setAttribute('open', '')
+    const itemId = article.getAttribute('id')
 
     return article.dispatchEvent(View.getLoadEvent(childCount, Item.LOAD_COUNT, Number(itemId)))
   }
@@ -49,28 +96,15 @@ class Item {
     }
   }
 
-  static queryContainer(item) {
-    return item.querySelector('details')
-  }
-
-  static queryLoader(item) {
-    return item.querySelector('& > details > section > footer > button')
-  }
-
-  static countChildren(item) {
-    return item.querySelectorAll('& > details > section > article')?.length || 0
-  }
-
   static render(item) {
     const article = document.createElement('article')
     article.setAttribute('id', item.id)
 
     if (item.deleted || item.dead || item.text === '[delayed]') {
-      article.setAttribute('data-deleted', '')
-      return article
+      return Item.setNodeDead(article)
     }
 
-    article.setAttribute('data-kids', item.kids?.length || 0)
+    Item.setKidsNumber(article, item.kids?.length || 0)
 
     const title = document.createElement('h1')
     const subtitle = document.createElement('h2')
@@ -136,17 +170,5 @@ class Item {
     }
 
     return article
-  }
-
-  static toggleContainer(item) {
-    const container = Item.queryContainer(item)
-
-    if (!container) return
-
-    if (container.getAttribute('open') === '') {
-      container.removeAttribute('open')
-    } else {
-      container.setAttribute('open', '')
-    }
   }
 }

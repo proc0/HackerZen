@@ -21,4 +21,8 @@ article {
       display: none;
     }
   }
+
+  &[data-dead] {
+    display: none;
+  }
 }

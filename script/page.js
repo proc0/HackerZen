@@ -11,8 +11,17 @@ class Page extends View {
     return (items) => {
       items.forEach((item) => {
         const post = Item.render(item)
+        if (Item.isNodeDead(post)) {
+          return
+        }
+
         if (parent instanceof Page) {
-          parent.appendChild(post)
+          const loader = parent.querySelector('article#loader')
+          if (loader) {
+            parent.insertBefore(post, loader)
+          } else {
+            parent.appendChild(post)
+          }
         } else {
           const loader = Item.queryLoader(parent)
           const section = parent.querySelector('section')
@@ -23,6 +32,12 @@ class Page extends View {
           }
         }
       })
+
+      if (parent instanceof Page && !parent.querySelector('article#loader')) {
+        const loader = Item.render({ kids: [1, 2, 3], id: 'loader' })
+        Item.openContainer(Item.queryContainer(loader))
+        parent.append(loader)
+      }
     }
   }
 
