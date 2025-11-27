@@ -35,7 +35,7 @@ class View extends HTMLElement {
     let ellapsedText = ''
     if (seconds < 60) {
       const label = seconds === 1 ? 'second' : 'seconds'
-      ellapsedText = `${ellapsed} ${label}`
+      ellapsedText = `${seconds} ${label}`
     } else if (minutes < 60) {
       const label = minutes === 1 ? 'minute' : 'minutes'
       ellapsedText = `${minutes} ${label}`
