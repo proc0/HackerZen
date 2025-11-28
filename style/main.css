@@ -9,10 +9,6 @@ html {
 article {
   padding: 0 0 0 1rem;
 
-  &[data-dead] {
-    display: none;
-  }
-
   textarea {
     width: 100%;
   }

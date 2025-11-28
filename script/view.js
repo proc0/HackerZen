@@ -1,28 +1,34 @@
 class View extends HTMLElement {
   static model = new Model()
+  static EVENT_LOAD = 'load'
 
   constructor() {
     super()
 
-    this.addEventListener('load', ({ detail, target }) => {
-      View.renderLoading(target)
-      View.model
-        .getItems(detail)
-        .then(Page.render(target))
-        .then(() => View.removeLoading(target))
+    this.addEventListener(View.EVENT_LOAD, ({ detail, target }) => {
+      View.render(target)
+      View.model.getItems(detail).then(Page.render(target)).then(View.clean(target))
     })
   }
 
-  static renderLoading(parent) {
+  static render(parent) {
+    const isPage = parent instanceof Page
+    const loader = (isPage ? Page : Item).queryLoader(parent)
+    const container = isPage ? parent : parent.querySelector('section')
+
     const loadingText = document.createElement('span')
     loadingText.setAttribute('data-loading', '')
     loadingText.textContent = 'Loading...'
 
-    parent.appendChild(loadingText)
+    if (loader) {
+      container.insertBefore(loadingText, loader)
+    } else {
+      container.appendChild(loadingText)
+    }
   }
 
-  static removeLoading(parent) {
-    parent.querySelector('span[data-loading]').remove()
+  static clean(parent) {
+    return () => parent.querySelector('span[data-loading]').remove()
   }
 
   static getTimeLabel(begin, end) {
@@ -55,7 +61,7 @@ class View extends HTMLElement {
   }
 
   static getLoadEvent(cursor, count, source) {
-    return new CustomEvent('load', {
+    return new CustomEvent(View.EVENT_LOAD, {
       bubbles: true,
       detail: {
         cursor,

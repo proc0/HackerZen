@@ -7,36 +7,45 @@ class Page extends View {
     this.dispatchEvent(View.getLoadEvent(0, Page.LOAD_COUNT, this.SOURCE))
   }
 
+  static countChildren(node) {
+    return node.querySelectorAll('& > article')?.length || 0
+  }
+
+  static queryLoader(node) {
+    return node.querySelector('& > button')
+  }
+
+  static onLoad(event) {
+    event.stopPropagation()
+    const page = event.target.parentElement
+    const postCount = Page.countChildren(page)
+    const loadEvent = View.getLoadEvent(postCount, Page.LOAD_COUNT, Page.getStory(page))
+    return page.dispatchEvent(loadEvent)
+  }
+
   static render(parent) {
     return (items) => {
+      const isPage = parent instanceof Page
+      const loader = (isPage ? Page : Item).queryLoader(parent)
+      const container = isPage ? parent : parent.querySelector('section')
+
       items.forEach((item) => {
         const post = Item.render(item)
-        if (Item.isNodeDead(post)) {
-          return
-        }
 
-        if (parent instanceof Page) {
-          const loader = parent.querySelector('article#loader')
-          if (loader) {
-            parent.insertBefore(post, loader)
-          } else {
-            parent.appendChild(post)
-          }
+        if (!post) return
+
+        if (loader) {
+          container.insertBefore(post, loader)
         } else {
-          const loader = Item.queryLoader(parent)
-          const section = parent.querySelector('section')
-          if (loader) {
-            section.insertBefore(post, loader.parentElement)
-          } else {
-            section.appendChild(post)
-          }
+          container.appendChild(post)
         }
       })
 
-      if (parent instanceof Page && !parent.querySelector('article#loader')) {
-        const loader = Item.render({ kids: items.map((i) => i.id), id: 'loader' })
-        Item.openContainer(Item.queryContainer(loader))
-        parent.appendChild(loader)
+      if (isPage && !loader) {
+        const button = document.createElement('button')
+        button.textContent = `Load more`
+        button.addEventListener('click', Page.onLoad)
+        parent.appendChild(button)
       }
     }
   }

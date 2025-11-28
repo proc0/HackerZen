@@ -5,35 +5,32 @@ class Item {
     return node.querySelectorAll('& > details > section > article')?.length || 0
   }
 
-  static getKidsNumber(node) {
-    return Number(node.getAttribute('data-kids'))
-  }
-
-  static isNodeDead(node) {
-    return node.getAttribute('data-dead') === ''
+  static queryLoader(node) {
+    return node.querySelector('& > details > section > button')
   }
 
   static queryContainer(node) {
     return node.querySelector('details')
   }
 
-  static queryLoader(node) {
-    return node.querySelector('& > details > section > footer > button')
-  }
-
-  static openContainer(container) {
-    container.setAttribute('open', '')
-    return container
+  static getKidsNumber(node) {
+    return Number(node.getAttribute('data-kids'))
   }
 
   static setKidsNumber(node, kidsNumber) {
     node.setAttribute('data-kids', kidsNumber)
+
     return node
   }
 
-  static setNodeDead(node) {
-    node.setAttribute('data-dead', '')
-    return node
+  static openContainer(node) {
+    const container = Item.queryContainer(node)
+
+    if (!container) return
+
+    container.setAttribute('open', '')
+
+    return container
   }
 
   static toggleContainer(node) {
@@ -52,14 +49,8 @@ class Item {
 
   static onLoad(event) {
     event.stopPropagation()
-    const article = event.target.closest('article')
-
-    if (article.getAttribute('id') === 'loader' && article.parentElement instanceof Page) {
-      const page = article.parentElement
-      const postCount = page.querySelectorAll('& > article')?.length || 0
-      const loadEvent = View.getLoadEvent(postCount, Page.LOAD_COUNT, Page.getStory(page))
-      return page.dispatchEvent(loadEvent)
-    }
+    const button = event.target
+    const article = button.closest('article')
 
     const childCount = Item.countChildren(article)
     const kidsNumber = Item.getKidsNumber(article)
@@ -69,15 +60,15 @@ class Item {
     Item.setKidsNumber(article, kidsLeft)
 
     if (kidsLeft === 0) {
-      event.target.parentElement.remove()
+      button.remove()
     } else {
-      // event.target.textContent = `${'✛'.repeat(kidsLeft)}`
-      event.target.textContent = `✛${kidsLeft}`
+      button.textContent = `✛${kidsLeft}`
     }
 
-    Item.queryContainer(article).setAttribute('open', '')
+    Item.openContainer(article)
     const itemId = article.getAttribute('id')
     const loadEvent = View.getLoadEvent(childCount, Item.LOAD_COUNT, Number(itemId))
+
     return article.dispatchEvent(loadEvent)
   }
 
@@ -115,14 +106,13 @@ class Item {
   }
 
   static render(item) {
+    if (item.deleted || item.dead || item.text === '[delayed]') return
+
     const article = document.createElement('article')
     article.setAttribute('id', item.id)
 
-    if (item.deleted || item.dead || item.text === '[delayed]') {
-      return Item.setNodeDead(article)
-    }
-
-    Item.setKidsNumber(article, item.kids?.length || 0)
+    const kidCount = item.kids?.length || 0
+    Item.setKidsNumber(article, kidCount)
 
     const title = document.createElement('h1')
     const subtitle = document.createElement('h2')
@@ -138,7 +128,7 @@ class Item {
         link.setAttribute('href', item.url)
         link.textContent = item.title
         link.addEventListener('click', View.depropagate)
-        title.append(link)
+        title.appendChild(link)
       } else {
         title.textContent = item.title
       }
@@ -149,49 +139,44 @@ class Item {
     if (item.by && item.time) {
       const username = document.createElement('span')
       username.textContent = `${item.score || ''} ${item.by} `
-      const childCount = item.descendants || item.kids?.length || 0
+      const childCount = item.descendants || kidCount
       const childCountLabel = childCount > 0 ? `🗨 ${childCount}` : ''
       const timeLabel = View.getTimeLabel(item.time * 1000, Date.now())
       subtitle.textContent = `⏲ ${timeLabel} ${childCountLabel} `
       subtitle.prepend(username)
+
       subtitle.addEventListener('click', Item.onExpand)
     }
 
     if (item.text) {
       comment.innerHTML = item.text
-      const links = comment.querySelectorAll('a')
-      if (links?.length) {
-        links.forEach((link) => link.setAttribute('target', '_blank'))
-      }
+      comment.querySelectorAll('a')?.forEach((a) => a.setAttribute('target', '_blank'))
     }
 
     if (item.type === 'comment') {
-      article.append(subtitle)
-      article.append(comment)
+      article.appendChild(subtitle)
+      article.appendChild(comment)
       const replyButton = document.createElement('button')
       replyButton.textContent = 'reply'
       replyButton.addEventListener('click', Item.onReply)
       article.appendChild(replyButton)
     } else {
-      article.append(title)
-      article.append(subtitle)
-      section.append(comment)
+      article.appendChild(title)
+      article.appendChild(subtitle)
+      section.appendChild(comment)
     }
 
-    if (item.kids?.length > 0 || (item.type !== 'comment' && item.text)) {
-      details.append(summary)
-      details.append(section)
-      article.append(details)
+    if (kidCount > 0 || (item.type !== 'comment' && item.text)) {
+      details.appendChild(summary)
+      details.appendChild(section)
+      article.appendChild(details)
     }
 
-    if (item.kids?.length > 0) {
+    if (kidCount > 0) {
       const button = document.createElement('button')
-      const footer = document.createElement('footer')
-      // button.textContent = `${'✛'.repeat(item.kids.length)}`
-      button.textContent = `✛${item.descendants || item.kids?.length || 0}`
+      button.textContent = `✛${kidCount}`
       button.addEventListener('click', Item.onLoad)
-      footer.append(button)
-      section.append(footer)
+      section.appendChild(button)
     }
 
     return article
