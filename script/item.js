@@ -1,5 +1,5 @@
 class Item {
-  static LOAD_COUNT = 3
+  static PAYLOAD = 3
 
   static countChildren(node) {
     return node.querySelectorAll('& > details > section > article')?.length || 0
@@ -7,10 +7,6 @@ class Item {
 
   static queryLoader(node) {
     return node.querySelector('& > details > section > button')
-  }
-
-  static queryContainer(node) {
-    return node.querySelector('details')
   }
 
   static getKidsNumber(node) {
@@ -24,7 +20,7 @@ class Item {
   }
 
   static isContainerOpen(node) {
-    const container = Item.queryContainer(node)
+    const container = node.querySelector('details')
 
     if (!container) return false
 
@@ -32,7 +28,7 @@ class Item {
   }
 
   static openContainer(node) {
-    const container = Item.queryContainer(node)
+    const container = node.querySelector('details')
 
     if (!container) return
 
@@ -42,7 +38,7 @@ class Item {
   }
 
   static toggleContainer(node) {
-    const container = Item.queryContainer(node)
+    const container = node.querySelector('details')
 
     if (!container) return
 
@@ -60,23 +56,23 @@ class Item {
     const button = event.target
     const article = button.closest('article')
 
-    const loadCount = Item.LOAD_COUNT
-    const childCount = Item.countChildren(article)
-    const kidsNumber = Item.getKidsNumber(article)
-    const kidsLength = kidsNumber > loadCount ? kidsNumber - childCount : kidsNumber
-    const kidsLeft = kidsLength > loadCount ? kidsLength - loadCount : 0
+    const payload = Item.PAYLOAD
+    const current = Item.countChildren(article)
+    const available = Item.getKidsNumber(article)
+    const requested = available > payload ? available - current : available
+    const remaining = requested > payload ? requested - payload : 0
 
-    Item.setKidsNumber(article, kidsLeft)
+    Item.setKidsNumber(article, remaining)
 
-    if (kidsLeft === 0) {
-      button.remove()
+    if (remaining > 0) {
+      button.textContent = `✛${remaining}`
     } else {
-      button.textContent = `✛${kidsLeft}`
+      button.remove()
     }
 
     Item.openContainer(article)
-    const itemId = article.getAttribute('id')
-    const loadEvent = View.getLoadEvent(childCount, loadCount, Number(itemId))
+    const id = article.getAttribute('id')
+    const loadEvent = View.getLoadEvent(current, payload, Number(id))
 
     return article.dispatchEvent(loadEvent)
   }
@@ -105,9 +101,9 @@ class Item {
       return existingForm.remove()
     }
 
-    const id = article.getAttribute('id')
     const node = document.getElementById('reply').content.cloneNode(true)
     const form = node.querySelector('form')
+    const id = article.getAttribute('id')
     form.setAttribute('action', `/reply/${id}`)
 
     if (!Item.isContainerOpen(article)) {
