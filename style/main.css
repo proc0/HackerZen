@@ -3,7 +3,7 @@
 html {
   font-family: 'Roboto', sans-serif;
   font-optical-sizing: auto;
-  font-size: 0.18in;
+  font-size: 0.15in;
 }
 
 app-page {
@@ -18,8 +18,7 @@ app-page {
 }
 
 h1 a {
-  text-decoration-thickness: 0.1rem;
-  text-underline-offset: 0.33rem;
+  text-decoration: none;
 }
 
 h1,
@@ -32,19 +31,19 @@ button {
 button {
   appearance: none;
   font-size: inherit;
-  font-weight: bold;
   border: none;
   padding: 0;
 }
 
 h1 {
   margin: 0 0 0.2rem 0;
+  font-weight: normal;
 }
 
 h2 {
   font-size: 1.2rem;
   font-weight: normal;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.5rem 0.2rem;
 
   &:has(~ details:not([open])) {
     &::after {
@@ -64,7 +63,7 @@ h2 {
 }
 
 article {
-  margin: 0 0 0.5rem 1rem;
+  margin: 0 0 0.5rem 0;
 
   textarea {
     width: 100%;
@@ -74,5 +73,9 @@ article {
 details {
   summary {
     display: none;
+  }
+
+  section {
+    margin: 0 0 0 1.4rem;
   }
 }
