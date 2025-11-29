@@ -1,19 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="theme-gruvbox" lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="dimgray" media="(prefers-color-scheme: dark)" />
     <meta name="description" content="Smooth Hacker News" />
-    <title>Lacquer News</title>
+    <title>Hack N Slash</title>
+    <!-- <base target="_top" href="https://example.com/" /> -->
     <link rel="icon" href="favicon.ico" sizes="any" />
     <link rel="stylesheet" href="style/main.css" />
     <script src="script/client.js"></script>
     <script src="script/store.js"></script>
     <script src="script/model.js"></script>
     <script src="script/view.js"></script>
+    <script src="script/item.js"></script>
     <script src="script/page.js"></script>
   </head>
+  <template id="reply">
+    <form method="post">
+      <textarea name="text"></textarea>
+      <button type="submit">submit</button>
+    </form>
+  </template>
+  <template id="item">
+    <article>
+      <h1><a target="_blank"></a></h1>
+      <h2>
+        <span></span>
+        <time></time>
+        <button name="reply">⮢</button>
+      </h2>
+      <details>
+        <summary></summary>
+        <section>
+          <button name="load"></button>
+        </section>
+      </details>
+    </article>
+  </template>
   <body>
     <script src="script/main.js"></script>
   </body>

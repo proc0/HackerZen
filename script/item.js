@@ -1,0 +1,193 @@
+class Item {
+  static PAYLOAD = 3
+
+  static countChildren(node) {
+    return node.querySelectorAll('& > details > section > article')?.length || 0
+  }
+
+  static queryLoader(node) {
+    return node.querySelector('& > details > section > button')
+  }
+
+  static getKidsNumber(node) {
+    return Number(node.getAttribute('data-kids'))
+  }
+
+  static setKidsNumber(node, kidsNumber) {
+    node.setAttribute('data-kids', kidsNumber)
+
+    return node
+  }
+
+  static isContainerOpen(node) {
+    const container = node.querySelector('details')
+
+    if (!container) return false
+
+    return container.getAttribute('open') === ''
+  }
+
+  static openContainer(node) {
+    const container = node.querySelector('details')
+
+    if (!container) return
+
+    container.setAttribute('open', '')
+
+    return container
+  }
+
+  static toggleContainer(node) {
+    const container = node.querySelector('details')
+
+    if (!container) return
+
+    if (container.getAttribute('open') === '') {
+      container.removeAttribute('open')
+    } else {
+      container.setAttribute('open', '')
+    }
+
+    return container
+  }
+
+  static onLoad(event) {
+    event.stopPropagation()
+    const button = event.target
+    const article = button.closest('article')
+
+    const payload = Item.PAYLOAD
+    const current = Item.countChildren(article)
+    const available = Item.getKidsNumber(article)
+    const requested = available > payload ? available - current : available
+    const remaining = requested > payload ? requested - payload : 0
+
+    Item.setKidsNumber(article, remaining)
+
+    if (remaining > 0) {
+      button.textContent = `✛${remaining}`
+    } else {
+      button.remove()
+    }
+
+    Item.openContainer(article)
+    const id = article.getAttribute('id')
+    const loadEvent = View.getLoadEvent(current, payload, Number(id))
+
+    return article.dispatchEvent(loadEvent)
+  }
+
+  static onExpand(event) {
+    event.stopPropagation()
+    const article = event.target.closest('article')
+    const loader = Item.queryLoader(article)
+
+    Item.toggleContainer(article)
+
+    if (!Item.countChildren(article) && !!loader) {
+      loader.click()
+    }
+  }
+
+  static onReply(event) {
+    event.stopPropagation()
+    const article = event.target.closest('article')
+    const isPost = article.parentElement instanceof Page
+
+    const existingForm = isPost
+      ? article.querySelector('& > details > section > form')
+      : article.querySelector('& > form')
+    if (existingForm) {
+      return existingForm.remove()
+    }
+
+    const node = document.getElementById('reply').content.cloneNode(true)
+    const form = node.querySelector('form')
+    const id = article.getAttribute('id')
+    form.setAttribute('action', `/reply/${id}`)
+
+    if (!Item.isContainerOpen(article)) {
+      Item.openContainer(article)
+    }
+
+    // select text body
+    const comment = isPost
+      ? article.querySelector('& > details > section > div')
+      : article.querySelector('& > div')
+    // if post has no text
+    if (isPost && !comment) {
+      const section = article.querySelector('& > details > section')
+      section.insertAdjacentElement('afterbegin', form)
+    } else {
+      comment.insertAdjacentElement('afterend', form)
+    }
+  }
+
+  static render(item) {
+    if (item.deleted || item.dead || item.text === '[delayed]') return
+
+    const node = document.getElementById('item').content.cloneNode(true)
+    const article = node.querySelector('article')
+    article.setAttribute('id', item.id)
+
+    // set kid count in attribute
+    const kidCount = item.kids?.length || 0
+    Item.setKidsNumber(article, kidCount)
+
+    if (item.title) {
+      const title = node.querySelector('h1')
+      if (item.url) {
+        const link = node.querySelector('a')
+        link.setAttribute('href', item.url)
+        link.textContent = item.title
+        link.addEventListener('click', View.depropagate)
+      } else {
+        title.textContent = item.title
+      }
+      // expand details
+      title.addEventListener('click', Item.onExpand)
+    }
+
+    const subtitle = node.querySelector('h2')
+
+    if (item.by && item.time) {
+      // score and username
+      subtitle.querySelector('span').textContent = `${item.score || ''} ${item.by} `
+      // time of post and comment count
+      const childCount = item.descendants || kidCount
+      const childCountLabel = childCount > 0 ? `🗨 ${childCount}` : ''
+      const timeLabel = View.getTimeLabel(item.time * 1000, Date.now())
+      subtitle.querySelector('time').textContent = `⏲ ${timeLabel} ${childCountLabel} `
+      // expand details
+      subtitle.addEventListener('click', Item.onExpand)
+    }
+
+    // reply button click event
+    subtitle.querySelector('button').addEventListener('click', Item.onReply)
+    const section = node.querySelector('section')
+
+    if (item.text) {
+      const comment = document.createElement('div')
+      comment.innerHTML = item.text
+      // process comment links
+      comment.querySelectorAll('a')?.forEach((a) => a.setAttribute('target', '_blank'))
+      // attach post body in section to collapse it
+      if (item.type === 'comment') {
+        subtitle.insertAdjacentElement('afterend', comment)
+      } else {
+        section.insertAdjacentElement('afterbegin', comment)
+      }
+    }
+
+    if (kidCount > 0) {
+      const button = section.querySelector('button')
+      button.textContent = `✛${kidCount}`
+      button.addEventListener('click', Item.onLoad)
+      section.insertAdjacentElement('beforeend', button)
+    } else {
+      node.querySelector('details').remove()
+    }
+
+    return node
+  }
+}
