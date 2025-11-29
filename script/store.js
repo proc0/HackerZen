@@ -1,5 +1,5 @@
 class Store {
-  static DB_NAME = 'LacquerNews'
+  static DB_NAME = document.title
   static STORE_NAME = 'items'
   static VERSION = 1
   static CACHE_LIFE = 5 * 60 * 1000

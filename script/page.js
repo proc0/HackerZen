@@ -1,8 +1,8 @@
 class Page extends View {
-  static LOAD_COUNT = 5
+  static PAYLOAD = 5
 
   connectedCallback() {
-    this.dispatchEvent(View.getLoadEvent(0, Page.LOAD_COUNT, Page.getStory(this)))
+    this.dispatchEvent(View.loadEvent(0, Page.PAYLOAD, Page.getStory(this)))
   }
 
   static countChildren(node) {
@@ -17,7 +17,7 @@ class Page extends View {
     event.stopPropagation()
     const page = event.target.parentElement
     const postCount = Page.countChildren(page)
-    const loadEvent = View.getLoadEvent(postCount, Page.LOAD_COUNT, Page.getStory(page))
+    const loadEvent = View.loadEvent(postCount, Page.PAYLOAD, Page.getStory(page))
     return page.dispatchEvent(loadEvent)
   }
 

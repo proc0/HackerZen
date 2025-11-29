@@ -61,7 +61,6 @@ class Item {
     const available = Item.getKidsNumber(article)
     const requested = available > payload ? available - current : available
     const remaining = requested > payload ? requested - payload : 0
-
     Item.setKidsNumber(article, remaining)
 
     if (remaining > 0) {
@@ -71,8 +70,8 @@ class Item {
     }
 
     Item.openContainer(article)
-    const id = article.getAttribute('id')
-    const loadEvent = View.getLoadEvent(current, payload, Number(id))
+    const id = Number(article.getAttribute('id'))
+    const loadEvent = View.loadEvent(current, payload, id)
 
     return article.dispatchEvent(loadEvent)
   }

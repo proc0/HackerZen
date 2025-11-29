@@ -60,7 +60,7 @@ class View extends HTMLElement {
     event.stopPropagation()
   }
 
-  static getLoadEvent(cursor, count, source) {
+  static loadEvent(cursor, count, source) {
     return new CustomEvent(View.EVENT_LOAD, {
       bubbles: true,
       detail: {
