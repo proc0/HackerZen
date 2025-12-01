@@ -14,12 +14,20 @@ main {
   nav {
     background-color: var(--color-background);
 
-    a:hover {
-      color: var(--color-highlight);
-    }
+    a {
+      color: var(--color-secondary);
 
-    a.active {
-      color: var(--color-highlight);
+      &:hover {
+        color: var(--color-highlight) !important;
+      }
+
+      &.active {
+        color: var(--color-highlight);
+      }
+
+      &:visited {
+        color: var(--color-secondary);
+      }
     }
   }
 }

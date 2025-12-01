@@ -59,7 +59,7 @@ class View extends HTMLElement {
     })
   }
 
-  static normalize(item) {
+  static normalize(item, isConnected = false) {
     if (item.deleted || item.dead || item.text === '[delayed]') {
       return null
     }
@@ -75,13 +75,13 @@ class View extends HTMLElement {
       delete item.score
       delete item.by
     } else if (item.type === 'comment') {
-      item.upvote = true
-      item.downvote = true
-      item.reply = true
+      item.upvote = isConnected
+      item.downvote = isConnected
+      item.reply = isConnected
     } else {
-      item.upvote = true
+      item.upvote = isConnected
       item.downvote = false
-      item.reply = true
+      item.reply = isConnected
     }
 
     return item

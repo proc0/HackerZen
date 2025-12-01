@@ -2,16 +2,7 @@ class Page extends View {
   static TAG = 'app-page'
   static PAYLOAD = 13
 
-  connectedCallback() {
-    if (this.classList.contains('active') && location.hash === this.id) {
-      this.load()
-    }
-  }
-
   load() {
-    if (this.parentElement.isConnected) {
-      console.log('ONLINE')
-    }
     const postCount = Query.countChildren(this)
     const loadEvent = View.loadEvent(postCount, Page.PAYLOAD, this.id)
     return this.dispatchEvent(loadEvent)
@@ -27,9 +18,10 @@ class Page extends View {
     return (items) => {
       const loader = Query.loader(parent)
       const container = Query.container(parent)
+      const isConnected = document.querySelector('main').isConnected
 
       items.forEach((item) => {
-        const normal = View.normalize(item)
+        const normal = View.normalize(item, isConnected)
 
         if (!normal) return
 
