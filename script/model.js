@@ -2,15 +2,14 @@ class Model {
   store = new Store()
 
   list(cursor, count, id) {
-    if (typeof id === 'string') {
-      return Client.fetchPosts(id).then((ids) => ids.slice(cursor, cursor + count))
+    switch (typeof id) {
+      case 'string':
+        return Client.fetchPosts(id).then((ids) => ids.slice(cursor, cursor + count))
+      case 'number':
+        return this.store.find(id).then(({ kids }) => kids.slice(cursor, cursor + count))
+      default:
+        return this.unit(this.unit([]))
     }
-
-    if (typeof id === 'number') {
-      return this.store.find(id).then(({ kids }) => kids.slice(cursor, cursor + count))
-    }
-
-    return this.unit(this.unit([]))
   }
 
   load({ cursor, count, id }) {
