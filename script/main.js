@@ -7,9 +7,12 @@ class App extends HTMLElement {
 
   initialize() {
     customElements.define(Page.TAG, Page)
-    const page = document.createElement(Page.TAG)
-    page.setAttribute('id', HN.top.id)
-    this.appendChild(page)
+    // const page = document.createElement(Page.TAG)
+    // page.setAttribute('id', HN.top.id)
+    // this.appendChild(page)
+    const template = document.getElementById('app')
+    const node = template.content.cloneNode(true)
+    this.appendChild(node)
 
     // const page2 = document.createElement(TAG_PAGE)
     // page2.setAttribute('data-tab', 'Ask')

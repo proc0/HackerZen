@@ -49,6 +49,20 @@
       </details>
     </article>
   </template>
+  <template id="app">
+    <ul class="tabs" role="tablist">
+      <li>
+        <input type="radio" name="tab" id="top" checked />
+        <label for="top" role="tab">Top</label>
+        <app-page id="top"></app-page>
+      </li>
+      <li>
+        <input type="radio" name="tab" id="new" />
+        <label for="new" role="tab">New</label>
+        <app-page id="new"></app-page>
+      </li>
+    </ul>
+  </template>
   <body>
     <script src="script/main.js"></script>
   </body>
