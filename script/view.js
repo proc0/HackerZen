@@ -31,29 +31,29 @@ class View extends HTMLElement {
     return () => parent.querySelector('span[data-loading]').remove()
   }
 
-  static labelTime(begin, end) {
+  static age(begin, end) {
     const ellapsed = end - begin
     const seconds = Math.floor(ellapsed / 1000)
     const minutes = Math.floor(ellapsed / 60000)
     const hours = Math.floor(ellapsed / 3600000)
     const days = Math.floor(ellapsed / 86400000)
 
-    let timeLabel = ''
+    let ageText = ''
     if (seconds < 60) {
       const label = seconds === 1 ? 'second' : 'seconds'
-      timeLabel = `${seconds} ${label}`
+      ageText = `${seconds} ${label}`
     } else if (minutes < 60) {
       const label = minutes === 1 ? 'minute' : 'minutes'
-      timeLabel = `${minutes} ${label}`
+      ageText = `${minutes} ${label}`
     } else if (hours < 24) {
       const label = hours === 1 ? 'hour' : 'hours'
-      timeLabel = `${hours} ${label}`
+      ageText = `${hours} ${label}`
     } else {
       const label = days === 1 ? 'day' : 'days'
-      timeLabel = `${days} ${label}`
+      ageText = `${days} ${label}`
     }
 
-    return timeLabel
+    return ageText
   }
 
   static stopEvent(event) {
@@ -69,5 +69,31 @@ class View extends HTMLElement {
         source,
       },
     })
+  }
+
+  static normalize(item) {
+    if (item.deleted || item.dead || item.text === '[delayed]') {
+      return null
+    }
+
+    if (!item.kids) {
+      item.kids = []
+    }
+
+    if (item.type === 'job') {
+      item.upvote = false
+      item.downvote = false
+      item.reply = false
+    } else if (item.type === 'comment') {
+      item.upvote = true
+      item.downvote = true
+      item.reply = true
+    } else {
+      item.upvote = true
+      item.downvote = false
+      item.reply = true
+    }
+
+    return item
   }
 }

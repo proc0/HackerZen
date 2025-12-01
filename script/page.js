@@ -28,9 +28,11 @@ class Page extends View {
       const container = isPage ? parent : parent.querySelector('section')
 
       items.forEach((item) => {
-        const post = Item.render(item)
+        const valid = View.normalize(item)
 
-        if (!post) return
+        if (!valid) return
+
+        const post = Item.render(valid)
 
         if (loader) {
           container.insertBefore(post, loader)

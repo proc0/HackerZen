@@ -27,16 +27,6 @@ class Item {
     return comment
   }
 
-  static getKidData(node) {
-    return Number(node.getAttribute('data-kids'))
-  }
-
-  static setKidData(node, count) {
-    node.setAttribute('data-kids', count)
-
-    return node
-  }
-
   static isContainerOpen(node) {
     const container = node.querySelector('details')
 
@@ -76,10 +66,11 @@ class Item {
 
     const payload = Item.PAYLOAD
     const current = Item.countChildNodes(article)
-    const available = Item.getKidData(article)
+    const available = article.getAttribute('data-kids')
     const requested = available > payload ? available - current : available
     const remaining = requested > payload ? requested - payload : 0
-    Item.setKidData(article, remaining)
+
+    article.setAttribute('data-kids', remaining)
 
     if (remaining > 0) {
       button.textContent = `✛${remaining}`
@@ -135,57 +126,96 @@ class Item {
     }
   }
 
-  static render(item) {
-    if (item.deleted || item.dead || item.text === '[delayed]') return
+  static onVote(event) {
+    event.stopPropagation()
+    const button = event.target
+    const article = button.closest('article')
+    const vote = button.getAttribute('name')
+    const id = article.getAttribute('id')
+    fetch(`/${vote}/${id}`).then((res) => {
+      if (res.ok) button.remove()
+    })
+  }
 
-    const node = document.getElementById('item').content.cloneNode(true)
+  static render(item) {
+    const template = document.getElementById('item')
+    const node = template.content.cloneNode(true)
+
     const article = node.querySelector('article')
     article.setAttribute('id', item.id)
+    article.setAttribute('data-kids', item.kids.length)
 
-    // set kid count in data attribute
-    const kidCount = item.kids?.length || 0
-    Item.setKidData(article, kidCount)
-
+    const title = node.querySelector('h1')
     if (item.title) {
-      const title = node.querySelector('h1')
+      const link = node.querySelector('a')
       if (item.url) {
-        const link = node.querySelector('a')
         link.setAttribute('href', item.url)
         link.textContent = item.title
         link.addEventListener('click', View.stopEvent)
       } else {
+        link.remove()
         title.textContent = item.title
       }
-      // expand details
       title.addEventListener('click', Item.onExpand)
     } else {
-      node.querySelector('h1').remove()
+      title.remove()
     }
 
     const subtitle = node.querySelector('h2')
 
-    if (item.by && item.time) {
-      // socre and remove downvote for posts
-      if (item.type === 'comment') {
-        subtitle.querySelector('b').remove()
-      } else {
-        subtitle.querySelector('b').textContent = `${item.score || ''}`
-        subtitle.querySelector('button[name="downvote"]').remove()
-      }
-      // username
-      subtitle.querySelector('i').textContent = `${item.by}`
-      // time of post and comment count
-      const childCount = item.descendants || kidCount
-      const childLabel = childCount > 0 ? `🗨 ${childCount}` : ''
-      subtitle.querySelector('span').textContent = `${childLabel}`
-      const timeLabel = View.labelTime(item.time * 1000, Date.now())
-      subtitle.querySelector('time').textContent = `⏲ ${timeLabel} `
-      // expand details
-      subtitle.addEventListener('click', Item.onExpand)
+    const upvote = subtitle.querySelector('button[name="upvote"]')
+    if (item.upvote) {
+      upvote.addEventListener('click', Item.onVote)
+    } else {
+      upvote.remove()
     }
 
-    // reply button click event
-    subtitle.querySelector('button[name="reply"]').addEventListener('click', Item.onReply)
+    const downvote = subtitle.querySelector('button[name="downvote"]')
+    if (item.downvote) {
+      downvote.addEventListener('click', Item.onVote)
+    } else {
+      downvote.remove()
+    }
+
+    const score = subtitle.querySelector('b')
+    if (item.score) {
+      score.textContent = `${item.score}`
+    } else {
+      score.remove()
+    }
+
+    const username = subtitle.querySelector('i')
+    if (item.by) {
+      username.textContent = `${item.by}`
+    } else {
+      username.remove()
+    }
+
+    const childCount = item.descendants || item.kids.length
+    const labelCount = subtitle.querySelector('span')
+    if (childCount) {
+      labelCount.textContent = `🗨 ${childCount}`
+    } else {
+      labelCount.remove()
+    }
+
+    const age = subtitle.querySelector('time')
+    if (item.time) {
+      age.textContent = `⏲ ${View.age(item.time * 1000, Date.now())} `
+      // expand details
+      subtitle.addEventListener('click', Item.onExpand)
+    } else {
+      age.remove()
+    }
+
+    const reply = subtitle.querySelector('button[name="reply"]')
+    if (item.reply) {
+      reply.addEventListener('click', Item.onReply)
+    } else {
+      reply.remove()
+    }
+
+    // post text and branches
     const section = node.querySelector('section')
 
     if (item.text) {
@@ -201,9 +231,9 @@ class Item {
       }
     }
 
-    if (kidCount > 0) {
+    if (item.kids.length) {
       const button = section.querySelector('button')
-      button.textContent = `✛${kidCount}`
+      button.textContent = `✛${item.kids.length}`
       button.addEventListener('click', Item.onLoad)
       section.insertAdjacentElement('beforeend', button)
     } else {
