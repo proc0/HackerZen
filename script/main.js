@@ -1,8 +1,17 @@
 class App extends HTMLElement {
   static TAG = 'app-main'
+  #_isConnected = false
 
   constructor() {
     super()
+  }
+
+  get isConnected() {
+    return this.#_isConnected
+  }
+
+  set isConnected(value) {
+    this.#_isConnected = value
   }
 
   // initialize() {
@@ -50,21 +59,27 @@ class Tabs extends HTMLElement {
 
   onChange(event) {
     event.stopPropagation()
-    const tab = event.target.getAttribute('href')
-    this.change(tab)
+    event.preventDefault()
+    const id = event.target.getAttribute('href')
+    scrollTo(0, 0)
+    if (location.hash !== id) {
+      this.change(id)
+    }
   }
 
   change(id) {
     // clear active
-    document.querySelector('.active')?.classList.remove('active')
+    document.querySelector('nav .active')?.classList.remove('active')
+    document.querySelector('main > .active')?.classList.remove('active')
 
     const page = document.querySelector(id)
+    const tab = document.querySelector(`nav a[href="${id}"]`)
     if (!page) throw Error('Page does not exist')
 
     if (!Query.countChildren(page)) {
       page.load()
     }
-
+    tab.classList.add('active')
     page.classList.add('active')
   }
 }
@@ -87,7 +102,9 @@ window.onload = function () {
         userPage.setAttribute('id', 'user')
 
         document.querySelector('nav').add('user', user)
-        document.querySelector('main').appendChild(userPage)
+        const app = document.querySelector('main')
+        app.isConnected = true
+        app.appendChild(userPage)
       })
   }
   document.querySelector('nav').initialize()

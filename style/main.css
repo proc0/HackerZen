@@ -7,7 +7,7 @@ html {
 }
 
 main {
-  margin: 5.2rem 3rem;
+  margin: 5.5rem 3rem;
 
   nav {
     display: flex;
@@ -23,7 +23,7 @@ main {
     a {
       display: flex;
       text-decoration: none;
-      padding: 1rem;
+      padding: 1rem 1rem 1.7rem 1rem;
     }
   }
 }

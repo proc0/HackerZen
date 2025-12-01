@@ -9,6 +9,9 @@ class Page extends View {
   }
 
   load() {
+    if (this.parentElement.isConnected) {
+      console.log('ONLINE')
+    }
     const postCount = Query.countChildren(this)
     const loadEvent = View.loadEvent(postCount, Page.PAYLOAD, this.id)
     return this.dispatchEvent(loadEvent)

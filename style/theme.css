@@ -17,6 +17,10 @@ main {
     a:hover {
       color: var(--color-highlight);
     }
+
+    a.active {
+      color: var(--color-highlight);
+    }
   }
 }
 h2 {
