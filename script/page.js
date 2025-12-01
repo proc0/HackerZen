@@ -1,4 +1,5 @@
 class Page extends View {
+  static TAG = 'app-page'
   static PAYLOAD = 5
 
   connectedCallback() {

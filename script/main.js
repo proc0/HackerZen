@@ -1,12 +1,13 @@
 class App extends HTMLElement {
+  static TAG = 'app-main'
+
   constructor() {
     super()
   }
 
   initialize() {
-    const TAG_PAGE = 'app-page'
-    customElements.define(TAG_PAGE, Page)
-    const page = document.createElement(TAG_PAGE)
+    customElements.define(Page.TAG, Page)
+    const page = document.createElement(Page.TAG)
     page.setAttribute('id', HN.top.id)
     this.appendChild(page)
 
@@ -19,9 +20,7 @@ class App extends HTMLElement {
 }
 
 window.onload = function () {
-  const TAG_APP = 'app-main'
-  customElements.define(TAG_APP, App, { extends: 'main' })
-  const main = document.createElement('main', { is: TAG_APP }).initialize()
-
-  document.querySelector('body').prepend(main)
+  customElements.define(App.TAG, App, { extends: 'main' })
+  const main = document.createElement('main', { is: App.TAG }).initialize()
+  document.querySelector('body').insertAdjacentElement('afterbegin', main)
 }
