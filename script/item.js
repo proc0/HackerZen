@@ -177,7 +177,7 @@ class Item {
 
     const age = subtitle.querySelector('time')
     if (item.time) {
-      age.textContent = `⏲ ${Item.renderAge(item.time * 1000, Date.now())} `
+      age.textContent = `⏲${Item.renderAge(item.time * 1000, Date.now())} `
       subtitle.addEventListener('click', Item.onExpand)
     } else {
       age.remove()
