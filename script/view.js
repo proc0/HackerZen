@@ -13,7 +13,7 @@ class View extends HTMLElement {
 
   static render(parent) {
     const isPage = parent instanceof Page
-    const loader = (isPage ? Page : Item).queryLoader(parent)
+    const loader = Query.loader(parent)
     const container = isPage ? parent : parent.querySelector('section')
 
     const loadingText = document.createElement('span')
@@ -29,31 +29,6 @@ class View extends HTMLElement {
 
   static clean(parent) {
     return () => parent.querySelector('span[data-loading]').remove()
-  }
-
-  static age(begin, end) {
-    const ellapsed = end - begin
-    const seconds = Math.floor(ellapsed / 1000)
-    const minutes = Math.floor(ellapsed / 60000)
-    const hours = Math.floor(ellapsed / 3600000)
-    const days = Math.floor(ellapsed / 86400000)
-
-    let ageText = ''
-    if (seconds < 60) {
-      const label = seconds === 1 ? 'second' : 'seconds'
-      ageText = `${seconds} ${label}`
-    } else if (minutes < 60) {
-      const label = minutes === 1 ? 'minute' : 'minutes'
-      ageText = `${minutes} ${label}`
-    } else if (hours < 24) {
-      const label = hours === 1 ? 'hour' : 'hours'
-      ageText = `${hours} ${label}`
-    } else {
-      const label = days === 1 ? 'day' : 'days'
-      ageText = `${days} ${label}`
-    }
-
-    return ageText
   }
 
   static stopEvent(event) {
@@ -84,6 +59,8 @@ class View extends HTMLElement {
       item.upvote = false
       item.downvote = false
       item.reply = false
+      delete item.score
+      delete item.by
     } else if (item.type === 'comment') {
       item.upvote = true
       item.downvote = true

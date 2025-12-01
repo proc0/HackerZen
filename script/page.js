@@ -5,18 +5,10 @@ class Page extends View {
     this.dispatchEvent(View.loadEvent(0, Page.PAYLOAD, Page.getStory(this)))
   }
 
-  static countChildNodes(node) {
-    return node.querySelectorAll('& > article')?.length || 0
-  }
-
-  static queryLoader(node) {
-    return node.querySelector('& > button')
-  }
-
   static onLoad(event) {
     event.stopPropagation()
     const page = event.target.parentElement
-    const postCount = Page.countChildNodes(page)
+    const postCount = Query.countChildren(page)
     const loadEvent = View.loadEvent(postCount, Page.PAYLOAD, Page.getStory(page))
     return page.dispatchEvent(loadEvent)
   }
@@ -24,7 +16,7 @@ class Page extends View {
   static render(parent) {
     return (items) => {
       const isPage = parent instanceof Page
-      const loader = (isPage ? Page : Item).queryLoader(parent)
+      const loader = Query.loader(parent)
       const container = isPage ? parent : parent.querySelector('section')
 
       items.forEach((item) => {

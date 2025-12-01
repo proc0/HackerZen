@@ -1,71 +1,34 @@
 class Item {
   static PAYLOAD = 3
 
-  static countChildNodes(node) {
-    return node.querySelectorAll('& > details > section > article')?.length || 0
+  static close(node) {
+    const details = node.querySelector('details')
+    details?.removeAttribute('open')
+    return details
   }
 
-  static queryLoader(node) {
-    return node.querySelector('& > details > section > button')
+  static isOpen(node) {
+    const details = node.querySelector('details')
+    return details?.getAttribute('open') === ''
   }
 
-  static queryReplyForm(node) {
-    const form =
-      node.parentElement instanceof Page
-        ? node.querySelector('& > details > section > form')
-        : node.querySelector('& > form')
-
-    return form
+  static open(node) {
+    const details = node.querySelector('details')
+    details?.setAttribute('open', '')
+    return details
   }
 
-  static queryComment(node) {
-    const comment =
-      node.parentElement instanceof Page
-        ? node.querySelector('& > details > section > div')
-        : node.querySelector('& > div')
-
-    return comment
-  }
-
-  static isContainerOpen(node) {
-    const container = node.querySelector('details')
-
-    if (!container) return false
-
-    return container.getAttribute('open') === ''
-  }
-
-  static openContainer(node) {
-    const container = node.querySelector('details')
-
-    if (!container) return
-
-    container.setAttribute('open', '')
-
-    return container
-  }
-
-  static toggleContainer(node) {
-    const container = node.querySelector('details')
-
-    if (!container) return
-
-    if (container.getAttribute('open') === '') {
-      container.removeAttribute('open')
-    } else {
-      container.setAttribute('open', '')
-    }
-
-    return container
+  static toggleOpen(node) {
+    return Item.isOpen(node) ? Item.close(node) : Item.open(node)
   }
 
   static onLoad(event) {
     event.stopPropagation()
-    const button = event.target
-    const article = button.closest('article')
+    const loader = event.target
+    const article = loader.closest('article')
 
     const payload = Item.PAYLOAD
-    const current = Item.countChildNodes(article)
+    const current = Query.countChildren(article)
     const available = article.getAttribute('data-kids')
     const requested = available > payload ? available - current : available
     const remaining = requested > payload ? requested - payload : 0
@@ -73,12 +36,12 @@ class Item {
     article.setAttribute('data-kids', remaining)
 
     if (remaining > 0) {
-      button.textContent = `✛${remaining}`
+      loader.textContent = `✛${remaining}`
     } else {
-      button.remove()
+      loader.remove()
     }
 
-    Item.openContainer(article)
+    Item.open(article)
     const id = Number(article.getAttribute('id'))
     const loadEvent = View.loadEvent(current, payload, id)
 
@@ -88,11 +51,11 @@ class Item {
   static onExpand(event) {
     event.stopPropagation()
     const article = event.target.closest('article')
-    const loader = Item.queryLoader(article)
+    const loader = Query.loader(article)
 
-    Item.toggleContainer(article)
+    Item.toggleOpen(article)
 
-    if (!Item.countChildNodes(article) && !!loader) {
+    if (!Query.countChildren(article) && loader) {
       loader.click()
     }
   }
@@ -101,28 +64,30 @@ class Item {
     event.stopPropagation()
     const article = event.target.closest('article')
 
-    // return and remove form, if it exists
-    const replyForm = Item.queryReplyForm(article)
-    if (replyForm) return replyForm.remove()
+    // remove if exists
+    const reply = Query.reply(article)
+    if (reply) return reply.remove()
 
-    // render form template
-    const temp = document.getElementById('reply').content.cloneNode(true)
-    const form = temp.querySelector('form')
+    // render
+    const template = document.getElementById('reply')
+    const node = template.content.cloneNode(true)
+    const form = node.querySelector('form')
     const id = article.getAttribute('id')
     form.setAttribute('action', `/reply/${id}`)
 
-    const comment = Item.queryComment(article)
+    // attach
+    const text = Query.text(article)
     const isPost = article.parentElement instanceof Page
-    if (isPost && !comment) {
+    if (isPost && !text) {
       // when post has no text, prepend to section top
       const section = article.querySelector('& > details > section')
       section.insertAdjacentElement('afterbegin', form)
     } else {
-      comment.insertAdjacentElement('afterend', form)
+      text.insertAdjacentElement('afterend', form)
     }
 
-    if (isPost && !Item.isContainerOpen(article)) {
-      Item.openContainer(article)
+    if (isPost && !Item.isOpen(article)) {
+      Item.open(article)
     }
   }
 
@@ -201,8 +166,7 @@ class Item {
 
     const age = subtitle.querySelector('time')
     if (item.time) {
-      age.textContent = `⏲ ${View.age(item.time * 1000, Date.now())} `
-      // expand details
+      age.textContent = `⏲ ${Item.renderAge(item.time * 1000, Date.now())} `
       subtitle.addEventListener('click', Item.onExpand)
     } else {
       age.remove()
@@ -215,7 +179,6 @@ class Item {
       reply.remove()
     }
 
-    // post text and branches
     const section = node.querySelector('section')
 
     if (item.text) {
@@ -232,14 +195,39 @@ class Item {
     }
 
     if (item.kids.length) {
-      const button = section.querySelector('button')
-      button.textContent = `✛${item.kids.length}`
-      button.addEventListener('click', Item.onLoad)
-      section.insertAdjacentElement('beforeend', button)
+      const loader = section.querySelector('button')
+      loader.textContent = `✛${item.kids.length}`
+      loader.addEventListener('click', Item.onLoad)
+      section.insertAdjacentElement('beforeend', loader)
     } else {
       node.querySelector('details').remove()
     }
 
     return node
+  }
+
+  static renderAge(begin, end) {
+    const ellapsed = end - begin
+    const seconds = Math.floor(ellapsed / 1000)
+    const minutes = Math.floor(ellapsed / 60000)
+    const hours = Math.floor(ellapsed / 3600000)
+    const days = Math.floor(ellapsed / 86400000)
+
+    let ageText = ''
+    if (seconds < 60) {
+      const label = seconds === 1 ? 'second' : 'seconds'
+      ageText = `${seconds} ${label}`
+    } else if (minutes < 60) {
+      const label = minutes === 1 ? 'minute' : 'minutes'
+      ageText = `${minutes} ${label}`
+    } else if (hours < 24) {
+      const label = hours === 1 ? 'hour' : 'hours'
+      ageText = `${hours} ${label}`
+    } else {
+      const label = days === 1 ? 'day' : 'days'
+      ageText = `${days} ${label}`
+    }
+
+    return ageText
   }
 }
