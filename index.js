@@ -1,4 +1,5 @@
-import { createReadStream } from 'fs'
+import { createReadStream, readFileSync } from 'fs'
+import path from 'path'
 import Koa from 'koa'
 import Router from '@koa/router'
 import { bodyParser } from '@koa/bodyparser'
@@ -18,6 +19,18 @@ if (!process.env.HN_COOKIE) {
 }
 
 app.use(bodyParser())
+
+const faviconPath = path.join(path.dirname('.'), 'favicon.ico')
+const faviconBuffer = readFileSync(faviconPath)
+
+app.use(async (ctx, next) => {
+  if (ctx.path === '/favicon.ico') {
+    ctx.type = 'image/x-icon'
+    ctx.body = faviconBuffer
+  } else {
+    await next()
+  }
+})
 
 router
   .get('/', root)

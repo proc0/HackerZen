@@ -27,7 +27,7 @@ class Item {
     const loader = event.target
     const article = loader.closest('article')
 
-    const payload = Item.PAYLOAD
+    const payload = event.payload || Item.PAYLOAD
     const current = Query.countChildren(article)
     const available = article.getAttribute('data-kids')
     const requested = available > payload ? available - current : available

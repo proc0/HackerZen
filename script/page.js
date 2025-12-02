@@ -19,18 +19,28 @@ class Page extends View {
       const loader = Query.loader(parent)
       const container = Query.container(parent)
       const isConnected = document.querySelector('main').isConnected
+      const isPost = parent.parentElement instanceof Page
+      const firstPostLoad = isPost && Query.countChildren(parent) === 0
 
-      items.forEach((item) => {
-        const normal = View.normalize(item, isConnected)
+      items.forEach((data) => {
+        const item = View.normalize(data, isConnected)
 
-        if (!normal) return
+        if (!item) return
 
-        const node = Item.render(normal)
-
+        const fragment = Item.render(item)
         if (loader) {
-          container.insertBefore(node, loader)
+          container.insertBefore(fragment, loader)
         } else {
-          container.appendChild(node)
+          container.appendChild(fragment)
+        }
+
+        // load sub-items on first post load
+        if (firstPostLoad && item.kids.length > 0) {
+          Item.onLoad({
+            stopPropagation: () => {},
+            target: Query.loader(document.getElementById(item.id)),
+            payload: item.kids.length > 5 ? 2 : 1,
+          })
         }
       })
 
