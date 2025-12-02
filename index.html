@@ -6,7 +6,6 @@
     <meta name="theme-color" content="dimgray" media="(prefers-color-scheme: dark)" />
     <meta name="description" content="A minimal Hacker News clone." />
     <title>HydraNews</title>
-    <!-- <base target="_top" href="https://example.com/" /> -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -26,9 +25,10 @@
     <script src="script/main.js"></script>
   </head>
   <template id="reply">
-    <form method="post">
+    <form method="post" target="hiddenFrame">
       <textarea name="text"></textarea>
       <button type="submit">Submit</button>
+      <iframe name="hiddenFrame" style="display: none"></iframe>
     </form>
   </template>
   <template id="item">

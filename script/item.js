@@ -66,7 +66,7 @@ class Item {
 
     // remove if exists
     const reply = Query.reply(article)
-    if (reply) return reply.remove()
+    if (reply) return reply.classList.toggle('hidden')
 
     // render
     const template = document.getElementById('reply')
