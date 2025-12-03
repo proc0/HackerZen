@@ -1,6 +1,7 @@
 class App extends HTMLElement {
   static TAG = 'app-main'
   #_isConnected = false
+  #_user
 
   constructor() {
     super()
@@ -12,6 +13,14 @@ class App extends HTMLElement {
 
   set isConnected(value) {
     this.#_isConnected = value
+  }
+
+  get user() {
+    return this.#_user
+  }
+
+  set user(value) {
+    this.#_user = value
   }
 
   initialize() {
@@ -31,6 +40,7 @@ class App extends HTMLElement {
           tabs.add('user', user)
           const app = document.querySelector('main')
           app.isConnected = true
+          app.user = user
           // remove login tab
           app.querySelector('aside').remove()
           tabs.querySelector('a[href="#login"]').remove()

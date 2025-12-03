@@ -74,6 +74,7 @@ class Item {
     const form = node.querySelector('form')
     const id = article.getAttribute('id')
     form.setAttribute('action', `/reply/${id}`)
+    form.addEventListener('submit', Item.onSubmit)
 
     // attach
     const text = Query.text(article)
@@ -98,6 +99,40 @@ class Item {
     if (isPost && !Item.isOpen(article)) {
       Item.open(article)
     }
+  }
+
+  static onSubmit(event) {
+    event.stopPropagation()
+    event.preventDefault()
+
+    const form = event.target
+    const action = form.getAttribute('action')
+    const textarea = form.querySelector('textarea')
+    const text = textarea.value
+    const name = textarea.getAttribute('name')
+
+    fetch(action, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ [name]: text }),
+    }).then((response) => {
+      if (response.ok) {
+        const app = document.querySelector('main')
+        const itemData = {
+          id: 0,
+          by: app.user,
+          text,
+          time: Date.now() / 1000,
+          type: 'comment',
+        }
+        const item = View.normalize(itemData, app.isConnected)
+        const node = Item.render(item)
+
+        form.replaceWith(node)
+      }
+    })
   }
 
   static onVote(event) {
