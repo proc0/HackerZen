@@ -1,8 +1,10 @@
 html.theme-zone {
   --color-background: #222;
   --color-foreground: #ccc;
-  --color-secondary: #888;
-  --color-highlight: #eee;
+  --color-midground: #888;
+  --color-light: #eee;
+  --color-shade: #525252;
+  --color-shadow: #181818;
 }
 
 html {
@@ -10,26 +12,44 @@ html {
   color: var(--color-foreground);
 }
 
+#logo-square {
+  fill: var(--color-shadow);
+  stroke: var(--color-shade);
+}
+
+#logo-letter {
+  fill: var(--color-shade);
+}
+
+#logo:hover {
+  #logo-square {
+    filter: brightness(1.4);
+  }
+  #logo-letter {
+    filter: brightness(1.4);
+  }
+}
+
 main {
   nav {
     background-color: var(--color-background);
 
     a {
-      color: var(--color-secondary);
+      color: var(--color-midground);
 
       &:hover,
       &.active {
-        color: var(--color-highlight) !important;
+        color: var(--color-light) !important;
       }
 
       &:visited {
-        color: var(--color-secondary);
+        color: var(--color-midground);
       }
     }
   }
 }
 h2 {
-  color: var(--color-secondary);
+  color: var(--color-midground);
 
   b,
   i {
@@ -45,11 +65,11 @@ button {
 
 button:hover,
 a:hover {
-  color: var(--color-highlight);
+  color: var(--color-light);
 }
 
 a:visited {
-  color: var(--color-secondary);
+  color: var(--color-midground);
 }
 
 article {

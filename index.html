@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="dimgray" media="(prefers-color-scheme: dark)" />
     <meta name="description" content="A minimal Hacker News clone." />
-    <title>HydraNews</title>
+    <title>HackerZen</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -54,6 +54,25 @@
   <body>
     <main is="app-main">
       <nav is="app-nav" role="tablist">
+        <a href="https://news.ycombinator.com" target="_blank">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            version="1.1"
+            id="logo"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:svg="http://www.w3.org/2000/svg"
+          >
+            <g id="logo-square">
+              <rect id="square" width="21" height="21" x="1" y="1" />
+              <path
+                d="m 7,18.2 v -2 l 6.3,-9.5 h -6.1 v -2.4 h 9.4 v 2.1 l -6.4,9.4 h 6.5 v 2.4 z"
+                id="logo-letter"
+              />
+            </g>
+          </svg>
+        </a>
         <a href="#top" role="tab" class="active">Top</a>
         <a href="#new" role="tab">New</a>
         <a href="#best" role="tab">Best</a>

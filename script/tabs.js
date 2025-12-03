@@ -6,7 +6,7 @@ class Tabs extends HTMLElement {
   }
 
   initialize() {
-    this.querySelectorAll('a').forEach((a) => this.bindEvent(a))
+    this.querySelectorAll('a[role="tab"]').forEach((a) => this.bindEvent(a))
 
     if (location.hash.length) {
       this.change(location.hash)

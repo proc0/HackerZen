@@ -1,9 +1,10 @@
 @import url('theme.css');
 
 html {
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Arial', sans-serif;
   font-optical-sizing: auto;
   font-size: 0.15in;
+  line-height: 1.3rem;
 }
 
 main {
@@ -11,6 +12,7 @@ main {
 
   nav {
     display: flex;
+    align-items: center;
     padding: 2rem 0 0 0;
     width: 100%;
     position: fixed;
@@ -18,6 +20,7 @@ main {
 
     a:first-child {
       padding-left: 0;
+      padding-right: 0.5rem;
     }
 
     a {
@@ -29,7 +32,7 @@ main {
 
   aside {
     display: none;
-    margin-top: 6rem;
+    margin-top: 6.5rem;
 
     &.active {
       display: flex;
@@ -41,7 +44,7 @@ app-page {
   display: none;
   flex-direction: column;
   justify-content: flex-start;
-  margin-top: 6rem;
+  margin-top: 6.5rem;
 
   &.active {
     display: flex;
@@ -52,7 +55,7 @@ app-page {
     padding: 0.3rem 0;
 
     & > h2 {
-      margin: 0 0 0.5rem 0.2rem;
+      margin: 0.7rem 0 0.7rem 0.2rem;
       i {
         color: inherit;
       }
@@ -71,6 +74,7 @@ h1 a {
 h1,
 h2,
 button {
+  font-family: 'Roboto', sans-serif;
   cursor: pointer;
   box-sizing: border-box;
 }
@@ -85,10 +89,12 @@ button {
 h1 {
   margin: 0.2rem 0 0 0;
   font-weight: normal;
-  font-size: 1.8rem;
+  font-size: 1.7rem;
 }
 
 h2 {
+  display: flex;
+  align-items: center;
   font-size: 1rem;
   font-weight: normal;
   margin: 0 0 0.5rem -0.2rem;
@@ -104,6 +110,10 @@ h2 {
     &::after {
       content: '[─]';
     }
+  }
+
+  button {
+    line-height: 1rem;
   }
 
   button[name='downvote'] {
@@ -178,4 +188,19 @@ progress {
 
 .hidden {
   display: none;
+}
+
+#logo-square {
+  display: block;
+  stroke-width: 3;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  stroke-opacity: 1;
+  paint-order: markers fill stroke;
+}
+
+#logo-letter {
+  stroke-width: 0;
+  stroke-linecap: square;
+  paint-order: markers fill stroke;
 }
