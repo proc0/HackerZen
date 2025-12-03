@@ -1,19 +1,19 @@
 {
-  "name": "LacquerNews",
-  "version": "0.0.2",
-  "description": "Lightweight Hacker News with an ergonomic UI",
+  "name": "hackerzen",
+  "version": "0.1.0",
+  "description": "Minimalist Hacker News",
   "keywords": [
     "Hacker News",
     "YCombinator",
     "Tech"
   ],
-  "homepage": "https://github.com/proc0/LacquerNews#readme",
+  "homepage": "https://github.com/proc0/HackerZen#readme",
   "bugs": {
-    "url": "https://github.com/proc0/LacquerNews/issues"
+    "url": "https://github.com/proc0/HackerZen/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/proc0/LacquerNews.git"
+    "url": "git+https://github.com/proc0/HackerZen.git"
   },
   "license": "MIT",
   "author": "proc0",
