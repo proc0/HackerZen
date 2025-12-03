@@ -1,12 +1,14 @@
 <img src="logo.svg" />
 
-# HackerZen
+# Hacker Zen
 
 A minimalist Hacker News.
 
-## Optimized Experience
+Link: [https://proc0.github.io/HackerZen](https://proc0.github.io/HackerZen)
 
-Popular posts on [Hacker News](https://news.ycombinator.com) with thousands of comments slow down even powerful desktop machines. Despite its simple UI, it loads all replies at once with a lot of bloated HTML slowing the browser to a crawl.
+## Optimized
+
+Popular posts on [Hacker News](https://news.ycombinator.com) with thousands of comments slow down even powerful desktop machines. Despite its simple UI, it loads all replies at once with a lot of HTML stuttering the browser rendering.
 
 **Hacker Zen** adds incremental loading of posts and replies with a minimal UI for a better experience. It has zero dependencies for its static version (read-only version of the site), using plain JS and CSS, and it caches posts and replies using IndexedDB to avoid double fetching.
 
@@ -28,6 +30,10 @@ Popular posts on [Hacker News](https://news.ycombinator.com) with thousands of c
 
 ## Usage
 
+### Github pages
+
+[https://proc0.github.io/HackerZen](https://proc0.github.io/HackerZen)
+
 ### Just open index.html (read-only)
 
 Clone the repo, open index.html! This will load the static, read-only version. This is more or less like browsing Hacker News without being logged in.
@@ -48,6 +54,10 @@ The workaround is to copy the cookie into an environment variable. The local ser
    - (\*nix) Bash`$HN_COOKIE=<insert here>`
 7. Run the server with `node .`
 8. Navigate to `localhost:3000`
+
+## Building
+
+No build is needed, but there is a Parcel dep and a script to bundle js to avoid serving lots of files. Work in progress.
 
 ## Future potential updates
 
