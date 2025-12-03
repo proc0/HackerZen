@@ -6,7 +6,7 @@ A minimalist Hacker News.
 
 ## Optimized Experience
 
-Popular posts on (https://news.ycombinator.com)[Hacker News] with thousands of comments slow down even powerful desktop machines. Despite its simple UI, it loads all replies at once with a lot of bloated HTML slowing the browser to a crawl.
+Popular posts on [https://news.ycombinator.com](Hacker News) with thousands of comments slow down even powerful desktop machines. Despite its simple UI, it loads all replies at once with a lot of bloated HTML slowing the browser to a crawl.
 
 **Hacker Zen** adds incremental loading of posts and replies with a minimal UI for a better experience. It has zero dependencies for its static version (read-only version of the site), using plain JS and CSS, and it caches posts and replies using IndexedDB to avoid double fetching.
 
@@ -40,7 +40,7 @@ The workaround is to copy the cookie into an environment variable. The local ser
 
 1. Clone the repo
 2. Install dependencies `npm install`
-3. Login to (https://news.ycombinator.com)[Hacker News]
+3. Login to [https://news.ycombinator.com](Hacker News)
 4. Open DevTools or equivalent (i.e. Ctrl+Alt+I)
 5. Copy the user cookie
 6. Paste into an environment variable
